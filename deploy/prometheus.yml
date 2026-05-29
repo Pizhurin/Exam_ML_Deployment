@@ -1,0 +1,35 @@
+# Конфигурация Prometheus для single-node VPS
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: production
+    project: churn-prediction
+
+scrape_configs:
+  # Сам Prometheus
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Churn Prediction API
+  - job_name: churn_api
+    static_configs:
+      - targets: ["churn-api:8080"]
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Node Exporter (системные метрики VPS: CPU, RAM, disk)
+  # Добавь в docker-compose если нужен: image: prom/node-exporter
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  # MLflow (health endpoint как метрика)
+  - job_name: mlflow
+    static_configs:
+      - targets: ["mlflow:5000"]
+    metrics_path: /health
+    scrape_interval: 60s
+  
