@@ -15,10 +15,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Настройка значений SLO (из SLI_SLO.md)
-PSI_THRESHOLD_WARNING = 0.10
-PSI_THRESHOLD_CRITICAL = 0.20
-DRIFT_FEATURES_PCT_THRESHOLD = 0.30  # 30% признаков с дрейфом → алерт
-PREDICTION_KL_THRESHOLD = 0.10
+PSI_THRESHOLD_WARNING = 0.1
+PSI_THRESHOLD_CRITICAL = 0.2
+DRIFT_FEATURES_PCT_THRESHOLD = 0.3  # 30% признаков с дрейфом → алерт
+PREDICTION_KL_THRESHOLD = 0.1
 RETRAINING_TRIGGER_URL = os.getenv(
     "AIRFLOW_TRIGGER_URL", 
     "http://airflow:8080/api/v1/dags/churn_prediction_ml_pipeline/dagRuns"
@@ -27,7 +27,7 @@ RETRAINING_TRIGGER_URL = os.getenv(
 
 def compute_psi(baseline: np.ndarray, current: np.ndarray, bins: int = 10) -> float:
     """
-    PSI < 0.10 — норма, 0.10–0.20 — умеренный сдвиг, > 0.20 — критический.
+    PSI < 0.1 — норма, 0.1–0.2 — умеренный сдвиг, > 0.2 — критический.
     """
     # Baseline
     breakpoints = np.percentile(baseline, np.linspace(0, 100, bins + 1))
