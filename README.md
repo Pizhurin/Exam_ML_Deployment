@@ -1,4 +1,5 @@
-## Exam_ML_Deployment
+# Churn Prediction MLOps System
+## Exam_ML_Deployment_Pizhurin_Yuriy
 
 > **MLOps Level 2** · Прогнозирование оттока  
 > **Инфраструктура:** Beget VPS, Ubuntu 24.04, OpenTofu  
@@ -66,7 +67,22 @@ bash deploy/bootstrap.sh <SERVER_IP>
 
 ---
 
-### 3. Загрузить датасет и обучить первую модель
+### 3. Добавить ключи Yandex Cloud S3 в Airflow
+
+Airflow читает данные из бакета Yandex Cloud Object Storage.  
+Ключи хранятся в Airflow Variables — **не в коде и не в `.env`**.
+
+Зайди в Airflow UI (`http://<IP>:8080`) → **Admin → Variables → «+»** и добавь:
+
+| Key | Value |
+|-----|-------|
+| `YC_S3_ACCESS_KEY` | твой ключ доступа YC |
+| `YC_S3_SECRET_KEY` | твой секретный ключ YC |
+| `S3_BUCKET` | имя бакета |
+| `S3_DATA_KEY` | путь к файлу в бакете (например `telco/churn_data.csv`) |
+| `S3_ENDPOINT` | `https://storage.yandexcloud.net` |
+
+### 4. Загрузить датасет и обучить первую модель
 
 ```bash
 # Подключиться к серверу
@@ -134,12 +150,18 @@ curl -X POST http://<IP>:8000/predict \
 
 ## CI/CD (GitHub Actions)
 
-Добавь в Settings → Secrets репозитория:
+### Настройка: добавить секреты в GitHub
 
-| Secret | Значение |
-|--------|---------|
-| `BEGET_SERVER_IP` | IP сервера из `tofu output` |
-| `SSH_PRIVATE_KEY` | Содержимое `~/.ssh/id_ed25519` |
+Перейди в репозиторий → **Settings → Secrets and variables → Actions → New repository secret**:
+
+| Secret | Где взять |
+|--------|-----------|
+| `BEGET_SERVER_IP` | вывод `tofu output server_ip` |
+| `SSH_PRIVATE_KEY` | содержимое файла `~/.ssh/id_ed25519` |
+| `TELEGRAM_BOT_TOKEN` | от @BotFather в Telegram (опционально) |
+| `TELEGRAM_CHAT_ID` | ID твоего чата (опционально) |
+
+> Telegram-секреты опциональны — без них деплой работает, просто уведомлений не будет.
 
 
 После этого каждый `git push` в `main` → автоматический деплой обновлений на VPS.
@@ -162,7 +184,7 @@ curl -X POST http://<IP>:8000/predict \
 │
 ├── pipeline/
 │   ├── churn_pipeline.py   # ETL → FE → обучение → валидация → деплой
-│   └── airflow_dag.py      # Airflow DAG (расписание каждое воскресенье)
+│   └── airflow_dag.py      # Airflow DAG (расписание каждый день в 00:00 UTC)
 │
 ├── api/
 │   ├── main.py             # FastAPI: /predict, /health, /metrics
