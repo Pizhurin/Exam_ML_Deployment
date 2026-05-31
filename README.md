@@ -50,7 +50,7 @@ tofu apply
 
 ```bash
 chmod +x ../deploy/bootstrap.sh
-bash deploy/bootstrap.sh <SERVER_IP>
+bash ../deploy/bootstrap.sh <SERVER_IP>
 ```
 
 Скрипт сам:

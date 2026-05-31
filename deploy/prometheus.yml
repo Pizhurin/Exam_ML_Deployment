@@ -21,7 +21,6 @@ scrape_configs:
     scrape_interval: 30s
 
   # Node Exporter (системные метрики VPS: CPU, RAM, disk)
-  # Добавь в docker-compose если нужен: image: prom/node-exporter
   - job_name: node
     static_configs:
       - targets: ["node-exporter:9100"]
