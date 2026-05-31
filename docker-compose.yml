@@ -70,7 +70,7 @@ services:
       - "127.0.0.1:6379:6379"
 
   # MLflow
-  mmlflow:
+  mlflow:
     build:
       context: .
       dockerfile: deploy/Dockerfile
