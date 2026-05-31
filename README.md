@@ -29,7 +29,11 @@ Beget VPS (2 CPU / 4 GB RAM / 30 GB)
 ### 1. Поднять VPS через OpenTofu
 
 ```bash
-cd infrastructure/
+cd Exam_ML_Deployment/infrastructure/
+
+cat > terraform.tfvars << 'EOF'
+beget_token = "НОВЫЙ_ТОКЕН_БЕЗ_ПРОБЕЛОВ_И_КАВЫЧЕК_ВНУТРИ"
+EOF
 
 # Если ещё не установлен OpenTofu:
 # https://opentofu.org/docs/intro/install/
@@ -45,7 +49,7 @@ tofu apply
 ### 2. Развернуть стек одной командой
 
 ```bash
-chmod +x deploy/bootstrap.sh
+chmod +x ../deploy/bootstrap.sh
 bash deploy/bootstrap.sh <SERVER_IP>
 ```
 

@@ -1,11 +1,9 @@
-# infrastructure/main.tf
-# OpenTofu / Terraform — VPS на Beget для ML-системы прогнозирования оттока
-# Провайдер: https://tf.beget.com/beget/beget
+# main.tf
 
 terraform {
   required_providers {
     beget = {
-      source  = "tf.beget.com/beget/beget"
+      source = "tf.beget.com/beget/beget"
       version = ">= 0.0.33"
     }
   }
