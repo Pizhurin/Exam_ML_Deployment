@@ -35,14 +35,19 @@ def task_extract_and_validate(**context):
     import boto3
     import pandas as pd
     import io
+    from airflow.providers.amazon.aws.hooks.aws import AwsHook
 
     s3_bucket = Variable.get("S3_BUCKET", default_var="ml-data-bucket")
     s3_key = Variable.get("S3_DATA_KEY", default_var="telco/latest/churn_data.csv")
+    endpoint = Variable.get("S3_ENDPOINT", default_var="https://storage.yandexcloud.net")
 
-    s3 = boto3.client(
-        "s3",
-        endpoint_url=Variable.get("S3_ENDPOINT", default_var="https://storage.yandexcloud.net"),
-    )
+    # Инициализируем хук с ID вашего нового соединения
+    hook = AwsHook(aws_conn_id='yandex_s3')
+    
+    # Получаем клиент s3 с уже настроенными внутри ключами
+    s3 = hook.get_client_type('s3', region_name=None)
+    # Принудительно устанавливаем endpoint для Yandex Object Storage
+    s3.meta.endpoint_url = endpoint
 
     obj = s3.get_object(Bucket=s3_bucket, Key=s3_key)
     df = pd.read_csv(io.BytesIO(obj["Body"].read()))
