@@ -27,7 +27,7 @@ resource "beget_compute_instance" "ml_vps" {
 
   configuration = {
     cpu       = 2
-    ram_mb    = 4096   # 4 GB — минимум для Airflow + MLflow одновременно
+    ram_mb    = 6144   # 4 GB — минимум для Airflow + MLflow одновременно
     disk_mb   = 30720  # 30 GB — данные, модели, логи, Docker-образы
     cpu_class = "normal_cpu"
   }
