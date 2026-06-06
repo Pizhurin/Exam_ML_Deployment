@@ -120,7 +120,7 @@ def monitor_prediction_drift(baseline_scores: np.ndarray, current_scores: np.nda
 
 def trigger_retraining(reason: str):
     """Отправляет POST-запрос в Airflow для запуска переобучения."""
-    logger.warning(f"🚨 Триггер переобучения: {reason}")
+    logger.warning(f"Триггер переобучения: {reason}")
     payload = {
         "dag_run_id": f"drift_trigger_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}",
         "conf": {"trigger_reason": reason, "triggered_by": "drift_monitor"},
@@ -133,11 +133,11 @@ def trigger_retraining(reason: str):
             timeout=30,
         )
         if response.status_code in (200, 201):
-            logger.info("✅ DAG переобучения запущен успешно")
+            logger.info("DAG переобучения запущен успешно")
         else:
-            logger.error(f"❌ Airflow API вернул {response.status_code}: {response.text}")
+            logger.error(f"Airflow API вернул {response.status_code}: {response.text}")
     except Exception as e:
-        logger.error(f"❌ Не удалось запустить Airflow DAG: {e}")
+        logger.error(f"Не удалось запустить Airflow DAG: {e}")
 
 
 def run_monitoring(
@@ -208,7 +208,7 @@ def run_monitoring(
     if retrain_reasons:
         trigger_retraining(reason=" | ".join(retrain_reasons))
     else:
-        logger.info("✅ Дрейфа не обнаружено. Переобучение не требуется.")
+        logger.info("Дрейфа не обнаружено. Переобучение не требуется.")
 
     # Сохранить отчёт
     report_path = f"/tmp/drift_report_{datetime.utcnow().strftime('%Y%m%d')}.json"
